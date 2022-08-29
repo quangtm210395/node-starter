@@ -1,0 +1,4 @@
+dist
+tsconfig.json
+.eslintrc.js
+.prettierrc

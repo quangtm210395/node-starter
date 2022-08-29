@@ -1,0 +1,40 @@
+  {
+    "family": "${SERVICE_NAME}",
+    "taskRoleArn": "arn:aws:iam::151341758380:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::151341758380:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "containerDefinitions": [
+      {
+        "name": "${SERVICE_NAME}",
+        "image": "${IMAGE_NAME}",
+        "portMappings": [
+          {
+            "containerPort": 8080,
+            "hostPort": 8080,
+            "protocol": "tcp"
+          }
+        ],
+        "essential": true,
+        "environmentFiles": [
+          {
+            "value": "arn:aws:s3:::${PROJECT_NAME}-services-config/${SERVICE_NAME}/${ENV_NAME}/${ENV_NAME}.env",
+            "type": "s3"
+          }
+        ],
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-group": "/ecs/${ENV_NAME}/${SERVICE_NAME}-htfx",
+            "awslogs-region": "${AWS_REGION}",
+            "awslogs-stream-prefix": "ecs",
+            "awslogs-create-group": "true"
+          }
+        }
+      }
+    ],
+    "requiresCompatibilities": [
+      "FARGATE"
+    ],
+    "cpu": "${CPU_UNIT}",
+    "memory": "${MEMORY_UNIT}"
+  }

@@ -1,0 +1,46 @@
+version: '3.3'
+services:
+
+  redis:
+    image: docker.io/bitnami/redis:7.0
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    ports:
+      - '6379:6379'
+    networks:
+      parse_network:
+        ipv4_address: 172.20.1.101
+    volumes:
+      - 'redis_data:/bitnami/redis/data'
+
+  mongodb-primary:
+    # container_name: mongodb-primary
+    image: 'bitnami/mongodb:4.4'
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=localhost
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+      - MONGODB_ROOT_PASSWORD=password123
+    volumes:
+      - 'mongodb_data:/bitnami'
+    networks:
+      parse_network:
+        ipv4_address: 172.20.0.101
+    ports:
+      - 27017:27017
+
+volumes:
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  parse_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1

@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "pretty": true,
+    "types": ["node", "mocha"],
+    "sourceMap": true,
+    "target": "es2018",
+    "resolveJsonModule": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "lib": ["es2018", "esnext.asynciterable"],
+    "baseUrl": "./src",
+    "outDir": "dist",
+    "paths": {
+      "@Decorators/*": ["decorators/*"],
+      "@Libs/*": ["libs/*"],
+      "@Enums/*": ["enums/*"],
+      "@Configs/*": ["configs/*"],
+      "@Providers/*": ["providers/*"],
+      "@Jobs/*": ["jobs/*"],
+      "@Bots/*": ["bots/*"],
+      "@Middlewares/*": ["middlewares/*"],
+      "@Errors/*": ["errors/*"],
+      "@Models/*": ["databases/mongodb/models/*"],
+      "@ModelConstant/*": ["databases/mongodb/constants/*"],
+      "@Entities/*": ["databases/postgres/entities/*"],
+      "@Repositories/*": ["repositories/*"],
+      "@Consumers/*": ["consumers/*"],
+      "@Services/*": ["services/*"],
+      "@Sockets/*": ["sockets/*"],
+      "@Rests/*": ["rests/*"],
+      "@Resolvers/*": ["resolvers/*"]
+    }
+  },
+  "include": ["./src"],
+  "exclude": ["node_modules/*"]
+}

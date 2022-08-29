@@ -1,0 +1,33 @@
+export enum ContractEvent {
+  OPENED = 'Opened',
+  TRANSFER = 'Transfer',
+  CLAIMED = 'Claimed',
+  ORDER_CREATED = 'OrderCreated',
+  ORDER_SUCCESSFUL = 'OrderSuccessful',
+  ORDER_CANCELLED = 'OrderCancelled',
+  ORDER_CHANGED = 'OrderPriceChanged',
+  UNLOCKED = 'Unlocked',
+  RECRUITED = 'Recruited',
+  AWAKENED = 'Awakened',
+  EQUIPMENT_BOUGHT = 'EquipmentBought',
+  DISTRIBUTED = 'Distributed',
+  EVOLVED = 'Evolved',
+  PURCHASE_BATCH = 'PurchaseBatch',
+}
+
+export enum ContractEventKey {
+  OPENED = 'OPENED',
+  TRANSFER = 'TRANSFER',
+  CLAIMED = 'CLAIMED',
+  ORDER_CREATED = 'ORDER_CREATED',
+  ORDER_SUCCESSFUL = 'ORDER_SUCCESSFUL',
+  ORDER_CANCELLED = 'ORDER_CANCELLED',
+  ORDER_CHANGED = 'ORDER_CHANGED',
+  UNLOCKED = 'UNLOCKED',
+  RECRUITED = 'RECRUITED',
+  AWAKENED = 'AWAKENED',
+  EQUIPMENT_BOUGHT = 'EQUIPMENT_BOUGHT',
+  DISTRIBUTED = 'DISTRIBUTED',
+  EVOLVED = 'EVOLVED',
+  PURCHASE_BATCH = 'PURCHASE_BATCH',
+}

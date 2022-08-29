@@ -1,0 +1,14 @@
+{
+    "delay": "0",
+    "execMap": {
+        "ts": "node --inspect=0.0.0.0:9228 -r dotenv/config -r tsconfig-paths/register -r ts-node/register "
+    },
+    "events": {
+    },
+    "watch": [
+      "src"
+    ],
+    "env": {
+      "NODE_ENV": "local"
+    }
+}

@@ -1,0 +1,17 @@
+{
+  // "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[typescript,javascript]": {
+    "editor.formatOnSave": true,
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "cSpell.words": [
+    "Middlewares",
+    "Mimetypes",
+    "Moralis",
+    "Multicall",
+    "paginations"
+  ]
+}

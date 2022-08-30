@@ -5,6 +5,10 @@ import { SPLAT } from 'triple-beam';
 import { isObject, trimEnd } from 'lodash';
 import stringify from 'json-stringify-safe';
 
+import { env } from '@Libs/env';
+
+import { LogLevel } from '@Enums/LogLevel';
+
 const { combine, timestamp, printf, align, errors, colorize } = format;
 
 function formatObject(param: any) {
@@ -67,10 +71,19 @@ const upperCase = info => ({ ...info, level: info.level.toUpperCase() });
 
 const nonLocalEnvs = ['dev', 'stg', 'prod'];
 
-export class WinstonLogger {
-  public static create(thisModule: NodeModule) {
-    return winston.createLogger({
-      format: combine(
+export class WLogger {
+  transport: any;
+  constructor() {
+    this.transport = new transports.Console({ level: env.log.level });
+  }
+
+  changeLogLevel(level: LogLevel) {
+    this.transport.level = level;
+  }
+
+  public create(thisModule: NodeModule) {
+    const logger = winston.createLogger({
+      format: env.log.json ? format.json() : combine(
         ignoreAuthorization(),
         errors({ stack: true }),
         !nonLocalEnvs.includes(process.env.NODE_ENV) ? colorize() : format(upperCase)(),
@@ -85,7 +98,10 @@ export class WinstonLogger {
             }`,
         ),
       ),
-      transports: [new transports.Console()],
+      transports: [this.transport],
     });
+    return logger;
   }
 }
+
+export const WinstonLogger = new WLogger();

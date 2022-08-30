@@ -55,7 +55,7 @@ export default class HttpProvider extends ServiceProvider {
       },
       routePrefix: env.app.routePrefix || '/api',
       defaultErrorHandler: false,
-      controllers: [path.join(this.rootPath, 'controllers/rest/*Controller.{ts,js}')],
+      controllers: [path.join(this.rootPath, 'rests/controllers/*Controller.{ts,js}')],
       middlewares: [path.join(this.rootPath, 'middlewares/rest/*')],
       interceptors: [path.join(this.rootPath, 'interceptors/rest/*')],
       authorizationChecker: async (action, roles: RestRoles[]) => {

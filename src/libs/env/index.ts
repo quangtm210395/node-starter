@@ -41,7 +41,6 @@ export const env = {
   log: {
     level: getOsEnv('LOG_LEVEL'),
     json: toBool(getOsEnvOptional('LOG_JSON')),
-    output: getOsEnv('LOG_OUTPUT'),
   },
   mongodb: {
     uri: getOsEnv('MONGODB_URI'),

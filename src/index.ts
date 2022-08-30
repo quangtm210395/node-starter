@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Container } from 'typedi';
+import { Container, Service } from 'typedi';
 import winston from 'winston';
 
 import { Logger } from '@Decorators/Logger';
@@ -7,13 +7,14 @@ import { Logger } from '@Decorators/Logger';
 import { appEvent } from '@Libs/appEvent';
 import { Kernel } from '@Libs/Kernel';
 
+@Service()
 class MainApplication {
   constructor(@Logger(module) private readonly logger: winston.Logger) {}
 
   public async bootstrap() {
     Container.set('rootPath', __dirname);
     try {
-      let providers = Container.get(Kernel).providers;
+      let providers = Kernel.providers;
       //register all all provider
       for (let provider of providers) {
         await Container.get(provider).register();

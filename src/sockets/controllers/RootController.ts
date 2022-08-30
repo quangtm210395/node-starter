@@ -1,10 +1,13 @@
 import { SocketController, OnConnect, OnDisconnect, OnMessage, MessageBody, EmitOnSuccess, ConnectedSocket, SocketId } from 'socket-controllers';
 import winston from 'winston';
-import { TextMessage } from '@Sockets/messages/TextMessage';
 import { Socket } from 'socket.io';
+import { Service } from 'typedi';
 
 import { Logger } from '@Decorators/Logger';
 
+import { TextMessage } from '@Sockets/messages/TextMessage';
+
+@Service()
 @SocketController('/socket')
 export class RootSocketController {
   constructor(@Logger(module) private readonly logger: winston.Logger) {}

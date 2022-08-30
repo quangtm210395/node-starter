@@ -1,5 +1,6 @@
 import { ArgumentValidationError, ForbiddenError, MiddlewareInterface, NextFn, ResolverData, UnauthorizedError } from 'type-graphql';
 import winston from 'winston';
+import { Service } from 'typedi';
 
 import { Logger } from '@Decorators/Logger';
 
@@ -7,6 +8,7 @@ import { GraphqlContext } from '@Libs/types/GraphqlContext';
 
 import { BusinessLogicError } from '@Errors/BusinessLogicError';
 
+@Service()
 export class ErrorHandlerMiddleware implements MiddlewareInterface<GraphqlContext> {
   constructor(@Logger(module) private readonly logger: winston.Logger) {}
 

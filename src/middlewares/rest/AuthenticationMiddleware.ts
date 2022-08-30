@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ExpressMiddlewareInterface, Middleware, UnauthorizedError } from 'routing-controllers';
 import winston from 'winston';
+import { Service } from 'typedi';
 
 import { Logger } from '@Decorators/Logger';
 
@@ -10,6 +11,7 @@ import { WinstonLogger } from '@Libs/WinstonLogger';
 
 const logger = WinstonLogger.create(module);
 
+@Service()
 @Middleware({ type: 'before' })
 export class AuthenticationMiddleware implements ExpressMiddlewareInterface {
   constructor(@Logger(module) private logger: winston.Logger) {}

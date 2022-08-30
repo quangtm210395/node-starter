@@ -1,8 +1,10 @@
 import { MiddlewareInterface, NextFn, ResolverData } from 'type-graphql';
 import winston from 'winston';
+import { Service } from 'typedi';
 
 import { Logger } from '@Decorators/Logger';
 
+@Service()
 export class LogAccess implements MiddlewareInterface<any> {
   constructor(@Logger(module) private readonly logger: winston.Logger) {}
 

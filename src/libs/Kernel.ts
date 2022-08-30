@@ -7,14 +7,13 @@ import MongodbProvider from '@Providers/MongodbProvider';
 import GraphqlProvider from '@Providers/GraphqlProvider';
 import SocketProvider from '@Providers/SocketProvider';
 
-@Service('kernel')
 export class Kernel {
   //provider register
-  public providers = [
+  public static providers = [
     BootstrapProvider,
     CacheProvider,
     HttpProvider,
-    // GraphqlProvider,
+    GraphqlProvider,
     MongodbProvider,
     SocketProvider,
   ];

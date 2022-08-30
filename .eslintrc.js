@@ -75,8 +75,8 @@ module.exports = {
         '@Repositories/**',
         '@Consumers/**',
         '@Services/**',
-        '@Messages/**',
-        '@Controllers/**',
+        '@Sockets/**',
+        '@Rests/**',
         '@Resolvers/**',
       ].map(pattern => ({
         pattern,

@@ -11,7 +11,7 @@ services:
       - '6379:6379'
     networks:
       parse_network:
-        ipv4_address: 172.20.1.101
+        ipv4_address: 172.21.1.101
     volumes:
       - 'redis_data:/bitnami/redis/data'
 
@@ -27,7 +27,7 @@ services:
       - 'mongodb_data:/bitnami'
     networks:
       parse_network:
-        ipv4_address: 172.20.0.101
+        ipv4_address: 172.21.0.101
     ports:
       - 27017:27017
 
@@ -42,5 +42,5 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.20.0.0/16
-          gateway: 172.20.0.1
+        - subnet: 172.21.0.0/16
+          gateway: 172.21.0.1

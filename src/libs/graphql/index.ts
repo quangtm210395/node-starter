@@ -1,5 +1,5 @@
 import DataLoader, { CacheMap } from 'dataloader';
-import { ObjectType, Container } from 'typedi';
+import { Container, Constructable } from 'typedi';
 import { Request, Response } from 'express';
 import { UnauthorizedError } from 'type-graphql';
 import  Redis  from 'ioredis';
@@ -23,7 +23,7 @@ export interface CreateDataLoaderOptions<K, V> {
  * Creates a new dataloader with the repository
  */
 export function createDataLoader<S, K, V>(
-  serviceType: ObjectType<S>,
+  serviceType: Constructable<S>,
   options: CreateDataLoaderOptions<K, V> = {},
 ): DataLoader<any, any> {
   let service: S;

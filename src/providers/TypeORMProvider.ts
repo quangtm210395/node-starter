@@ -2,7 +2,7 @@ import path from 'path';
 
 import winston from 'winston';
 import { Container, Inject, Service } from 'typedi';
-import { Connection, ConnectionOptions, createConnection } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 
 import { Logger } from '@Decorators/Logger';
 
@@ -12,14 +12,14 @@ import { appEvent } from '@Libs/appEvent';
 
 @Service()
 export default class TypeORMProvider extends ServiceProvider {
-  private connection: Connection;
+  private dataSource: DataSource;
 
   constructor(@Logger(module) private logger: winston.Logger, @Inject('rootPath') private readonly rootPath: string) {
     super();
   }
 
   async register(): Promise<void> {
-    const options: ConnectionOptions = {
+    const options: DataSourceOptions = {
       type: env.db.type as any,
       host: env.db.host,
       port: env.db.port,
@@ -33,17 +33,18 @@ export default class TypeORMProvider extends ServiceProvider {
       entities: [path.join(this.rootPath, `databases/${env.db.type}/entities/{*.ts,*.js}`)],
       reconnectInterval: 5000,
       cache: true,
-      schema: env.db.schema,
+      // schema: env.db.schema,
     };
-    this.connection = await createConnection(options);
+    this.dataSource = new DataSource(options);
 
-    Container.set('typeORMConnection', this.connection);
+    Container.set('dataSource', this.dataSource);
   }
 
   async boot(): Promise<void> {
+    await this.dataSource.initialize();
     appEvent.emit('db_connected', env.db.type);
     appEvent.on('shutdown', () => {
-      this.connection.close();
+      this.dataSource.destroy();
     });
   }
 }

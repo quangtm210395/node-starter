@@ -86,7 +86,7 @@
     "tscpaths": "^0.0.9",
     "type-graphql": "^1.1.1",
     "typedi": "0.10.0",
-    "typeorm": "^0.2.37",
+    "typeorm": "^0.3.9",
     "typeorm-typedi-extensions": "^0.4.1",
     "uuid": "^8.3.2",
     "winston": "^3.3.3"

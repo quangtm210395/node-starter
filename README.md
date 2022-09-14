@@ -24,8 +24,8 @@ Try it!! We are happy to hear your feedback or any kind of new features.
 - **TypeORM** to simply query to SQL entities. [typeorm](https://github.com/typeorm/typeorm).
 - **Mongoose** to simply query to mongodb models. [mongoose](https://github.com/Automattic/mongoose).
 - **API Documentation** thanks to [swagger](http://swagger.io/) and [routing-controllers-openapi](https://github.com/epiphone/routing-controllers-openapi).
-- **API Monitoring** thanks to [express-status-monitor](https://github.com/RafalWilinski/express-status-monitor).
 - **Basic Security Features** thanks to [Helmet](https://helmetjs.github.io/).
+- **API Monitoring** thanks to [express-status-monitor](https://github.com/RafalWilinski/express-status-monitor).
 
 ## ❯ Table of Contents
 
@@ -144,12 +144,11 @@ The swagger and the monitor route can be altered in the `.env` file.
 | **.vscode/**                      | VSCode tasks, launch configuration and some other settings |
 | **dist/**                         | Compiled source files will be placed here |
 | **src/**                          | Source files |
-| **src/controllers/**              | REST API Controllers |
-| **src/controllers/req**           | Request classes with validation rules if the body is not equal with a model |
-| **src/controllers/res**           | Response classes or interfaces to type json response bodies  |
+| **src/rests/controllers/**        | REST API Controllers |
+| **src/rests/types/**              | Request/Response classes with validation rules if the body is not equal with a model |
 | **src/errors/**                   | Custom HttpErrors like 404 NotFound |
 | **src/middlewares/**              | Express Middlewares like helmet security features |
-| **src/models/**                   | Mongoose Models |
+| **src/databases/**                | Mongoose / TypeORM Models |
 | **src/repositories/**             | Repository layer |
 | **src/services/**                 | Service layer |
 | **src/decorators/**               | Custom decorators like @Logger |
@@ -164,7 +163,7 @@ Our logger is [winston](https://github.com/winstonjs/winston). To log http reque
 We created a simple annotation to inject the logger in your service (see example below).
 
 ```typescript
-import { Logger } from '../../decorators/Logger';
+import { Logger } from '@Decorators/Logger';
 import { Logger as WinstonLogger } from 'winston';
 
 @Service()
@@ -184,8 +183,9 @@ But `@PubSub()` only work in `@Mutation` function, so we have some modify to mak
 ```typescript
 import { JsonController, Get } from 'routing-controllers';
 import { PubSubEngine } from 'type-graphql';
-import { Inject } from 'typedi';
+import { Inject, Service } from 'typedi';
 
+@Service()
 @JsonController('/test')
 export class BlockController {
   constructor(@Inject('pubSub') private pubSub: PubSubEngine) {}

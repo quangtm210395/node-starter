@@ -23,7 +23,7 @@ services:
     volumes:
       - 'mongodb_data:/bitnami'
     ports:
-      - 2001:27017
+      - 27017:27017
 
   postgres:
     image: postgres

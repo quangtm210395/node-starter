@@ -100,4 +100,9 @@ export const env = {
     ttlInMilliseconds: toNumber(getOsEnvOptional('DATALOADER_CACHE_TIME_TO_LIVE_IN_MILLISECONDS')) || 300000,
     max: toNumber(getOsEnvOptional('DATALOADER_CACHE_MAX_ITEMS')) || 100,
   },
+  keycloak: {
+    clientId: getOsEnv('KEYCLOAK_CLIENT_ID'),
+    clientSecret: getOsEnv('KEYCLOAK_CLIENT_SECRET'),
+    tokenUri: `${getOsEnv('KEYCLOAK_SERVER_URL')}/realms/${getOsEnv('KEYCLOAK_REALM')}/protocol/openid-connect/token`,
+  },
 };

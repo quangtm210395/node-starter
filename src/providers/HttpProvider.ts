@@ -7,6 +7,7 @@ import express, { Express } from 'express';
 import helmet from 'helmet';
 import { Container, Inject, Service } from 'typedi';
 import { mongoose } from '@typegoose/typegoose';
+import { Alohomora } from '@hikariq/alohomora';
 
 import { Logger } from '@Decorators/Logger';
 
@@ -15,6 +16,7 @@ import { appEvent } from '@Libs/appEvent';
 import { env } from '@Libs/env';
 import { ServerType } from '@Libs/env/ServerType';
 import { swaggerSetup } from '@Libs/swagger';
+import { WinstonLogger } from '@Libs/WinstonLogger';
 
 import { RestRoles } from '@Enums/RestRoles';
 
@@ -22,6 +24,7 @@ import { RestRoles } from '@Enums/RestRoles';
 export default class HttpProvider extends ServiceProvider {
   private expressApp: Express;
   private httpServer: Server;
+  private keycloak: Alohomora;
 
   constructor(@Inject('rootPath') private readonly rootPath: string, @Logger(module) private logger: winston.Logger) {
     super();
@@ -32,6 +35,10 @@ export default class HttpProvider extends ServiceProvider {
     this.httpServer = createServer(this.expressApp);
     Container.set('express', this.expressApp);
     Container.set('httpServer', this.httpServer);
+    this.keycloak = new Alohomora({
+      LoggerFactory: WinstonLogger,
+    });
+    Container.set('keycloak', this.keycloak);
     useContainer(Container);
   }
 
@@ -42,7 +49,9 @@ export default class HttpProvider extends ServiceProvider {
     this.expressApp.get('/health', (req, res) => {
       return res.send('Healthy');
     });
+    swaggerSetup(this.expressApp);
     this.expressApp.use(helmet());
+    this.expressApp.use(env.app.routePrefix || '/api', this.keycloak.init());
     useExpressServer(this.expressApp, {
       cors: true,
       classTransformer: true,
@@ -71,7 +80,6 @@ export default class HttpProvider extends ServiceProvider {
         return true;
       },
     });
-    swaggerSetup(this.expressApp);
     if (ServerType.allowProducerServer()) {
       //start server http
       this.httpServer.listen(env.app.port, () => {

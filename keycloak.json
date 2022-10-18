@@ -1,0 +1,54 @@
+{
+  "realm": "sf-services",
+  "bearer-only": true,
+  "auth-server-url": "http://localhost:8080/auth",
+  "json-enforcer-enabled": true,
+  "client-id": "${env.KEYCLOAK_CLIENT_ID}",
+  "secret": "${env.KEYCLOAK_CLIENT_SECRET}",
+  "policy-enforcer": {
+    "user-managed-access" : {},
+    "enforcement-mode" : "ENFORCING",
+    "paths": [
+      {
+        "name": "Merchant API",
+        "path" : "/api/merchant/:id",
+        "methods" : [
+          {
+            "method": "GET",
+            "scopes" : []
+          },
+          {
+            "method": "PATCH",
+            "scopes" : ["merchant#merchant:scopes:edit"]
+          },
+          {
+            "method": "DELETE",
+            "scopes" : ["merchant#merchant:scopes:delete"]
+          }
+        ]
+      },
+      {
+        "name" : "Employee API",
+        "path" : "/api/employee/:id",
+        "methods" : [
+          {
+            "method": "GET",
+            "scopes" : ["employee#employee:scopes:view"]
+          },
+          {
+            "method": "POST",
+            "scopes" : ["employee#employee:scopes:create"]
+          },
+          {
+            "method": "PATCH",
+            "scopes" : ["employee#employee:scopes:edit"]
+          },
+          {
+            "method": "DELETE",
+            "scopes" : ["employee#employee:scopes:delete"]
+          }
+        ]
+      }
+    ]
+  }
+}

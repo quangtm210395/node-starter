@@ -15,8 +15,8 @@ export class Kernel {
     CacheProvider,
     TypeORMProvider,
     HttpProvider,
-    GraphqlProvider,
-    MongodbProvider,
-    SocketProvider,
+    // GraphqlProvider,
+    // MongodbProvider,
+    // SocketProvider,
   ];
 }

@@ -1,11 +1,23 @@
+import { Type } from 'class-transformer';
+import { IsArray, IsNumber, ValidateNested } from 'class-validator';
 
-export class HttpPaginatedResponse<T> {
+export interface ClassType<T = any> {
+  new (...args: any[]): T;
+}
+export function HttpPaginatedResponse<T>(TClass: ClassType<T>) {
+  class HttpPaginatedResponseClass {
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(type => TClass)
     items: T[];
 
+    @IsNumber()
     total: number;
 
+    @IsNumber()
     size: number;
 
+    @IsNumber()
     page: number;
 
     withItems(items: T[]) {
@@ -27,4 +39,6 @@ export class HttpPaginatedResponse<T> {
       this.total = total;
       return this;
     }
+  }
+  return HttpPaginatedResponseClass;
 }

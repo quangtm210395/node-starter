@@ -22,10 +22,12 @@ export const swaggerSetup = (app: Express) => {
         components: {
           schemas,
           securitySchemes: {
-            access_token: {
-              type: 'apiKey',
-              in: 'header',
-              name: 'Authorization',
+            BearerToken: {
+              type: 'http',
+              name: 'Bearer Token',
+              scheme: 'bearer',
+              description: 'Pass the jwt accessToken',
+              bearerFormat: 'JWT',
             },
           },
         },
@@ -40,9 +42,8 @@ export const swaggerSetup = (app: Express) => {
     // Add npm infos to the swagger doc
 
     spec.servers = [
-      {
-        url: `${baseUrl}${env.app.routePrefix}`,
-      },
+      { url: `${baseUrl}${env.app.routePrefix}` },
+      { url: `http://localhost:${env.app.port}${env.app.routePrefix}` },
     ];
 
     app.use(env.swagger.route, swaggerUi.serve, swaggerUi.setup(spec));

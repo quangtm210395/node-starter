@@ -49,8 +49,13 @@ export default class HttpProvider extends ServiceProvider {
     this.expressApp.get('/health', (req, res) => {
       return res.send('Healthy');
     });
-    swaggerSetup(this.expressApp);
-    this.expressApp.use(helmet());
+    const cspDefaults = helmet.contentSecurityPolicy.getDefaultDirectives();
+    delete cspDefaults['upgrade-insecure-requests'];
+    this.expressApp.use(helmet({
+      contentSecurityPolicy: {
+        directives: cspDefaults,
+      },
+    }));
     this.expressApp.use(env.app.routePrefix || '/api', this.keycloak.init());
     useExpressServer(this.expressApp, {
       cors: true,
@@ -61,6 +66,7 @@ export default class HttpProvider extends ServiceProvider {
       },
       validation: {
         skipMissingProperties: false,
+        whitelist: true,
       },
       routePrefix: env.app.routePrefix || '/api',
       defaultErrorHandler: false,
@@ -80,6 +86,7 @@ export default class HttpProvider extends ServiceProvider {
         return true;
       },
     });
+    swaggerSetup(this.expressApp);
     if (ServerType.allowProducerServer()) {
       //start server http
       this.httpServer.listen(env.app.port, () => {

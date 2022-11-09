@@ -21,7 +21,7 @@ import { ChangeLogLevelReq } from '@Rests/types/ChangeLogLevelReq';
 
 @Service()
 @JsonController('/configs')
-@OpenAPI({ security: [{ access_token: [] }] })
+@OpenAPI({ security: [{ BearerToken: [] }] })
 export class ConfigController {
   constructor(
     @Logger(module) private readonly logger: winston.Logger,

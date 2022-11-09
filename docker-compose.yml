@@ -27,7 +27,7 @@ services:
 
   postgres:
     image: postgres
-    restart: always
+    #restart: always
     ports:
       - 2002:5432
     environment:

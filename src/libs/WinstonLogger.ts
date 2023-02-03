@@ -1,9 +1,10 @@
 import path from 'path';
 
-import winston, { format, transports, Logger } from 'winston';
-import { SPLAT } from 'triple-beam';
+import winston, { format, transports } from 'winston';
+import { MESSAGE, SPLAT } from 'triple-beam';
 import { isObject, trimEnd } from 'lodash';
 import stringify from 'json-stringify-safe';
+import safegify from 'safe-stable-stringify';
 
 import { env } from '@Libs/env';
 
@@ -32,6 +33,19 @@ function formatObject(param: any) {
   return param;
 }
 
+/*
+ * function replacer (key, value)
+ * Handles proper stringification of Buffer and bigint output.
+ */
+function replacer(key, value) {
+  // safe-stable-stringify does support BigInt, however, it doesn't wrap the value in quotes.
+  // Leading to a loss in fidelity if the resulting string is parsed.
+  // It would also be a breaking change for logform.
+  if (typeof value === 'bigint')
+    return value.toString();
+  return value;
+}
+
 const all = format((info: any) => {
   const splat = info[SPLAT] || [];
 
@@ -47,15 +61,32 @@ const all = format((info: any) => {
   return { ...info, message };
 });
 
+const serviceName = format((info: any) => {
+  return { ...info, serviceName: env.serviceName };
+});
+
+const json = format((info: any, opts: any) => {
+  const jsonStringify = safegify.configure(opts);
+  info[MESSAGE] = jsonStringify({
+    level: info.level,
+    message: info.message,
+    serviceName: info.serviceName,
+    timestamp: info.timestamp,
+    fileName: info.fileName,
+    stack: info.stack,
+  }, opts.replacer || replacer, opts.space);
+  return info;
+});
+
 const file = (thisModule?: NodeModule) =>
   format((info: any) => {
     if (!thisModule) {
       return info;
     }
     const BASE_PATH = path.resolve('.');
-    const fileName = thisModule.filename;
-    const moduleName = fileName.split(BASE_PATH)[1];
-    return { ...info, moduleName };
+    const fileNameFull = thisModule.filename;
+    const fileName = fileNameFull.split(BASE_PATH)[1];
+    return { ...info, fileName };
   });
 
 // replace authorization token in the header with '*'
@@ -83,21 +114,29 @@ export class WLogger {
 
   public create(thisModule: NodeModule) {
     const logger = winston.createLogger({
-      format: env.log.json ? format.json() : combine(
-        ignoreAuthorization(),
-        errors({ stack: true }),
-        !nonLocalEnvs.includes(process.env.NODE_ENV) ? colorize() : format(upperCase)(),
-        all(),
-        file(thisModule)(),
-        timestamp(),
-        align(),
-        printf(
-          info =>
-            `[${info.timestamp}] ${info.level}  [${info.moduleName}]: ${info.message} ${
-              info.stack ? `\n${info.stack}` : ''
-            }`,
+      format: env.log.json ?
+        combine(
+          serviceName(),
+          all(),
+          file(thisModule)(),
+          timestamp(),
+          json(),
+        ) :
+        combine(
+          ignoreAuthorization(),
+          errors({ stack: true }),
+          !nonLocalEnvs.includes(process.env.NODE_ENV) ? colorize() : format(upperCase)(),
+          all(),
+          file(thisModule)(),
+          timestamp(),
+          align(),
+          printf(
+            info =>
+              `[${info.timestamp}] ${info.level}  [${info.fileName}]: ${info.message} ${
+                info.stack ? `\n${info.stack}` : ''
+              }`,
+          ),
         ),
-      ),
       transports: [this.transport],
     });
     return logger;

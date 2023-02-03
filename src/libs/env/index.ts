@@ -25,6 +25,7 @@ export const env = {
   jobDefinitions: toArray(getOsEnv('JOB_DEFINITIONS')),
   cronDefinitions: toArray(getOsEnv('CRON_DEFINITIONS')),
   botDefinitions: toArray(getOsEnv('BOT_DEFINITIONS')),
+  serviceName: getOsEnvOptional('SERVICE_NAME') || 'starter',
   promise: {
     concurrency: toNumber(getOsEnv('PROMISE_CONCURRENCY')),
     retryTime: toNumber(getOsEnv('PROMISE_RETRY_TIME')) || 3,

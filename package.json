@@ -31,7 +31,7 @@
     "migrate-down": "dotenv migrate-mongo down"
   },
   "dependencies": {
-    "@hikariq/alohomora": "^1.0.1",
+    "@hikariq/alohomora": "^1.2.2",
     "@isaacs/ttlcache": "^1.1.0",
     "@socket.io/redis-adapter": "^7.0.0",
     "@supercharge/promise-pool": "^1.8.0",

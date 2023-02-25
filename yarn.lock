@@ -218,10 +218,10 @@
   dependencies:
     tslib "~2.4.0"
 
-"@hikariq/alohomora@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@hikariq/alohomora/-/alohomora-1.0.1.tgz#32c3bccb825e3b46bef07dd7b27e4024ec3d009d"
-  integrity sha512-KKH7mWwQVf50eEeYVuz7FJWA5iIlVHq0KjWmPDMtIw0d52H7EQOhxz+l2W6ukj7R50XKGu2XwaUcJqOC/vMgQw==
+"@hikariq/alohomora@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@hikariq/alohomora/-/alohomora-1.2.2.tgz#02e298096e04fd2ae9548320a76b7214dc2eb291"
+  integrity sha512-L354cSakCbIw8lInXK/DQPgbZh+6sRMez/aU62/iJ0QaTxaob8gtv5miu3Tx9JPQrNoB2C1K5vXIW1x6DEbfWQ==
   dependencies:
     jwk-to-pem "^2.0.5"
 

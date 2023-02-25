@@ -12,29 +12,29 @@ services:
     volumes:
       - 'redis_data:/bitnami/redis/data'
 
-  mongodb-primary:
-    # container_name: mongodb-primary
-    image: 'bitnami/mongodb:4.4'
-    environment:
-      - MONGODB_ADVERTISED_HOSTNAME=localhost
-      - MONGODB_REPLICA_SET_MODE=primary
-      - MONGODB_REPLICA_SET_KEY=replicasetkey123
-      - MONGODB_ROOT_PASSWORD=password123
-    volumes:
-      - 'mongodb_data:/bitnami'
-    ports:
-      - 27017:27017
+  # mongodb-primary:
+  #   # container_name: mongodb-primary
+  #   image: 'bitnami/mongodb:4.4'
+  #   environment:
+  #     - MONGODB_ADVERTISED_HOSTNAME=localhost
+  #     - MONGODB_REPLICA_SET_MODE=primary
+  #     - MONGODB_REPLICA_SET_KEY=replicasetkey123
+  #     - MONGODB_ROOT_PASSWORD=password123
+  #   volumes:
+  #     - 'mongodb_data:/bitnami'
+  #   ports:
+  #     - 27017:27017
 
-  postgres:
-    image: postgres
-    #restart: always
-    ports:
-      - 2002:5432
-    environment:
-      POSTGRES_PASSWORD: postgres
-      PGDATA: /data/postgres
-    volumes:
-      - postgres_data:/data/postgres
+  # postgres:
+  #   image: postgres
+  #   #restart: always
+  #   ports:
+  #     - 2002:5432
+  #   environment:
+  #     POSTGRES_PASSWORD: postgres
+  #     PGDATA: /data/postgres
+  #   volumes:
+  #     - postgres_data:/data/postgres
 
 volumes:
   mongodb_data:

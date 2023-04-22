@@ -42,7 +42,7 @@ export const swaggerSetup = (app: Express) => {
     // Add npm infos to the swagger doc
 
     spec.servers = [
-      { url: `${baseUrl}${env.app.routePrefix}` },
+      { url: `${baseUrl}${env.app.externalRoutePrefix}` },
       { url: `http://localhost:${env.app.port}${env.app.routePrefix}` },
     ];
 

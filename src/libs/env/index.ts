@@ -36,6 +36,7 @@ export const env = {
     externalPort: getOsEnv('APP_EXTERNAL_PORT'),
     schema: getOsEnv('APP_SCHEMA'),
     routePrefix: getOsEnv('APP_ROUTE_PREFIX'),
+    externalRoutePrefix: getOsEnv('APP_EXTERNAL_ROUTE_PREFIX'),
     beRoutePrefix: getOsEnv('APP_BE_ROUTE_PREFIX'),
     port: normalizePort(process.env.PORT || getOsEnv('APP_PORT')),
   },

@@ -10,4 +10,3 @@ registerEnumType(CollectionRankingsSorter, {
   name: 'CollectionRankingsSorter', // this one is mandatory
   description: 'The elements of ranking sorters', // this one is optional
 });
-    

@@ -9,4 +9,3 @@ registerEnumType(NFTOwnership, {
   name: 'NFTOwnership', // this one is mandatory
   description: 'The elements of NFT ownerships', // this one is optional
 });
-      

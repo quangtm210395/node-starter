@@ -30,7 +30,7 @@ export abstract class BaseRepository<T extends AnyParamConstructor<any>, C> {
   async countByFilters(filters: FilterQuery<DocumentType<C>>) {
     return this.getModel().countDocuments(filters);
   }
- 
+
   async findByFilters(filters: FilterQuery<DocumentType<C>>, sortBy?: string, sortDirection?: SortDirection) {
     const sort = {};
     if (sortBy) {

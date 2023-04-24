@@ -38,7 +38,7 @@ module.exports = {
       {
         'code': 120, 'ignoreComments': true,
         'ignoreTrailingComments': true,
-        'ignoreStrings': true,'ignoreRegExpLiterals': true,
+        'ignoreStrings': true, 'ignoreRegExpLiterals': true,
         'ignoreUrls': true
       }
     ],
@@ -48,9 +48,9 @@ module.exports = {
     'keyword-spacing': 'error',
     'space-in-parens': ['error', 'never'],
     'array-bracket-newline': ['off', 'consistent'],
-    'no-multiple-empty-lines': ['error', {max: 1}],
+    'no-multiple-empty-lines': ['error', { max: 1 }],
     // '@typescript-eslint/no-var-requires': 'off'
-
+    'no-trailing-spaces': ['error', { 'ignoreComments': true }],
 
     // import orders
     'import/order': ['error', {

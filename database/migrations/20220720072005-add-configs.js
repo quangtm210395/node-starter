@@ -9,7 +9,7 @@ module.exports = {
       {
         key: 'CONFIG_BSC_JSON_RPC_ENDPOINT',
         value: process.env.BSC_PROVIDER_RPC_ENDPOINT,
-      }, 
+      },
       {
         key: 'CONFIG_BSC_THE_GRAPH_URL',
         value: process.env.BSC_THE_GRAPH_URL,

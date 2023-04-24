@@ -1,11 +1,16 @@
 {
-  // "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[typescript,javascript]": {
+  "editor.formatOnSave": false,
+  "[typescript]": {
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+    "editor.defaultFormatter": "vscode.typescript-language-features",
+  },
+  "[javascript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "vscode.typescript-language-features",
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": true,
+    "source.organizeImports": false,
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "cSpell.words": [

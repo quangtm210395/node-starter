@@ -21,10 +21,7 @@ export const env = {
   isDev: process.env.NODE_ENV === 'dev',
   isLocal: process.env.NODE_ENV === 'local' || !process.env.NODE_ENV,
   serverType: process.env.SERVER_TYPE || 'producer', //server type include "producer, worker"
-  bscRpcEndPoint: process.env.BSC_RPC_ENDPOINT,
   jobDefinitions: toArray(getOsEnv('JOB_DEFINITIONS')),
-  cronDefinitions: toArray(getOsEnv('CRON_DEFINITIONS')),
-  botDefinitions: toArray(getOsEnv('BOT_DEFINITIONS')),
   serviceName: getOsEnvOptional('SERVICE_NAME') || 'starter',
   promise: {
     concurrency: toNumber(getOsEnv('PROMISE_CONCURRENCY')),
@@ -38,7 +35,7 @@ export const env = {
     routePrefix: getOsEnv('APP_ROUTE_PREFIX'),
     externalRoutePrefix: getOsEnv('APP_EXTERNAL_ROUTE_PREFIX'),
     beRoutePrefix: getOsEnv('APP_BE_ROUTE_PREFIX'),
-    port: normalizePort(process.env.PORT || getOsEnv('APP_PORT')),
+    port: normalizePort(getOsEnv('APP_PORT')),
   },
   log: {
     level: getOsEnv('LOG_LEVEL'),
@@ -81,16 +78,12 @@ export const env = {
     defaultExpirationTimeInSeconds: toNumber(getOsEnv('REDIS_DEFAULT_EXPIRATION_TIME_IN_SECONDS')) || 24 * 60 * 60, //1 days
   },
   jwt: {
-    publicKey: getOsEnv('JWT_PUBLIC_KEY'),
-    privateKey: getOsEnv('JWT_PRIVATE_KEY'),
+    publicKey: getOsEnvOptional('JWT_PUBLIC_KEY'),
+    privateKey: getOsEnvOptional('JWT_PRIVATE_KEY'),
   },
   graphqlJwt: {
     publicKey: getOsEnvOptional('GRAPHQL_JWT_PUBLIC_KEY'),
     privateKey: getOsEnvOptional('GRAPHQL_JWT_PRIVATE_KEY'),
-  },
-  refreshTokenJwt: {
-    publicKey: getOsEnvOptional('REFRESH_TOKEN_JWT_PUBLIC_KEY'),
-    privateKey: getOsEnvOptional('REFRESH_TOKEN_JWT_PRIVATE_KEY'),
   },
   aws: {
     region: getOsEnvOptional('AWS_REGION') || 'ap-southeast-1',

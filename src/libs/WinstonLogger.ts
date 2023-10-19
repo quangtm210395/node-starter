@@ -1,10 +1,11 @@
 import path from 'path';
 
 import winston, { format, transports } from 'winston';
-import { MESSAGE, SPLAT } from 'triple-beam';
+import { LEVEL, MESSAGE, SPLAT } from 'triple-beam';
 import { isObject, trimEnd } from 'lodash';
 import stringify from 'json-stringify-safe';
 import safegify from 'safe-stable-stringify';
+import ecsFormat from '@elastic/ecs-winston-format';
 
 import { env } from '@Libs/env';
 
@@ -12,7 +13,7 @@ import { LogLevel } from '@Enums/LogLevel';
 
 const { combine, timestamp, printf, align, errors, colorize } = format;
 
-function formatObject(param: any) {
+function formatObject(param: any): string {
   if (param && param.stack) {
     if (param.ctx && param.type) {
       return stringify(
@@ -48,7 +49,6 @@ function replacer(key, value) {
 
 const all = format((info: any) => {
   const splat = info[SPLAT] || [];
-
   const isSplatTypeMessage =
     typeof info.message === 'string' &&
     (info.message.includes('%s') || info.message.includes('%d') || info.message.includes('%j'));
@@ -58,7 +58,17 @@ const all = format((info: any) => {
   let message = formatObject(info.message);
   const rest = splat.map(formatObject).join(' ');
   message = trimEnd(`${message} ${rest}`);
-  return { ...info, message };
+  return {
+    message,
+    level: info.level,
+    err: info.err,
+    error: info.stack
+      ? { type: info.name, message: info.message, stack_trace: info.stack }
+      : undefined,
+    serviceName: info.serviceName,
+    [LEVEL]: info[LEVEL],
+    customData: info.customData,
+  };
 });
 
 const serviceName = format((info: any) => {
@@ -117,10 +127,10 @@ export class WLogger {
       format: env.log.json ?
         combine(
           serviceName(),
+          errors({ stack: true }),
           all(),
           file(thisModule)(),
-          timestamp(),
-          json(),
+          ecsFormat(),
         ) :
         combine(
           ignoreAuthorization(),
@@ -133,7 +143,7 @@ export class WLogger {
           printf(
             info =>
               `[${info.timestamp}] ${info.level}  [${info.fileName}]: ${info.message} ${
-                info.stack ? `\n${info.stack}` : ''
+                info.error || info.err ? `\n${info.error?.stack_trace || info.err?.stack || '' }` : ''
               }`,
           ),
         ),

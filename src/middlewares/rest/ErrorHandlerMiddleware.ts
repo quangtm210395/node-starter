@@ -11,7 +11,7 @@ export class ErrorHandlerMiddleware implements ExpressErrorMiddlewareInterface {
   constructor(@Logger(module) private logger: winston.Logger) {}
 
   public error(error: any, req: Request, res: Response, next: NextFunction) {
-    this.logger.error(`error mdw:: ${error.name}`, error);
+    this.logger.error(`error mdw:: ${error.name}`, { err: error });
     // if (error instanceof BusinessLogicError) {
     //   return res.status(error.httpCode || 500).json({
     //     name: error.name,

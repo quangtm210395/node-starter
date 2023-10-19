@@ -31,6 +31,7 @@
     "migrate-down": "dotenv migrate-mongo down"
   },
   "dependencies": {
+    "@elastic/ecs-winston-format": "^1.3.1",
     "@hikariq/alohomora": "^1.2.2",
     "@isaacs/ttlcache": "^1.1.0",
     "@socket.io/redis-adapter": "^7.0.0",

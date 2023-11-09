@@ -36,6 +36,17 @@ services:
     volumes:
       - postgres_data:/data/postgres
 
+  demo:
+    build: .
+    env_file: .env
+    links:
+      - mongodb-primary
+      - redis
+    ports:
+      - 3001:3001
+    networks:
+      - default
+
 volumes:
   mongodb_data:
     driver: local

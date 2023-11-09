@@ -25,16 +25,16 @@ services:
   #   ports:
   #     - 27017:27017
 
-  # postgres:
-  #   image: postgres
-  #   #restart: always
-  #   ports:
-  #     - 2002:5432
-  #   environment:
-  #     POSTGRES_PASSWORD: postgres
-  #     PGDATA: /data/postgres
-  #   volumes:
-  #     - postgres_data:/data/postgres
+  postgres:
+    image: postgres
+    #restart: always
+    ports:
+      - 2002:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+    volumes:
+      - postgres_data:/data/postgres
 
 volumes:
   mongodb_data:

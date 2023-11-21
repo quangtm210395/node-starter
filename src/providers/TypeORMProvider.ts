@@ -9,6 +9,8 @@ import { Logger } from '@Decorators/Logger';
 import ServiceProvider from '@Libs/provider/ServiceProvider';
 import { env } from '@Libs/env';
 import { appEvent } from '@Libs/appEvent';
+import { getLoggingLevel } from '@Libs/helper';
+import { TypeORMLogger } from '@Libs/TypeORMLogger';
 
 @Service()
 export default class TypeORMProvider extends ServiceProvider {
@@ -19,6 +21,7 @@ export default class TypeORMProvider extends ServiceProvider {
   }
 
   async register(): Promise<void> {
+    const loggingOptions = getLoggingLevel(env.db.logging);
     const options: DataSourceOptions = {
       type: env.db.type as any,
       host: env.db.host,
@@ -27,8 +30,8 @@ export default class TypeORMProvider extends ServiceProvider {
       password: env.db.password,
       database: env.db.database,
       synchronize: env.db.synchronize,
-      logging: env.db.logging as any,
-      logger: env.db.logger as any,
+      logging: loggingOptions,
+      logger: new TypeORMLogger(loggingOptions),
       migrations: env.db.migrations,
       entities: [path.join(this.rootPath, `databases/${env.db.type}/entities/{*.ts,*.js}`)],
       reconnectInterval: 5000,

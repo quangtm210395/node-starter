@@ -1,4 +1,13 @@
 import _ from 'lodash';
+import { LoggerOptions, LogLevel } from 'typeorm';
+
+export function  getLoggingLevel(logging: string): LoggerOptions {
+  if (logging.includes(',')) {
+    const levels = logging.split(',').filter(level => !!level) as LogLevel[];
+    return levels;
+  }
+  return logging === 'all' ? logging : logging === 'true';
+}
 
 export const wait = (ms: number) => {
   return new Promise<void>(resolve => {

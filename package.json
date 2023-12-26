@@ -1,5 +1,5 @@
 {
-  "name": "sf-starter",
+  "name": "be-starter",
   "version": "1.0.0",
   "main": "src/index.ts",
   "license": "MIT",
@@ -21,7 +21,7 @@
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha --timeout 10000 -r dotenv/config -r tsconfig-paths/register -r ts-node/register tests/**/*.test.ts",
     "testFile": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha --timeout 10000 -r dotenv/config -r tsconfig-paths/register -r ts-node/register ",
     "runFile": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha --timeout 10000 -r tsconfig-paths/register -r ts-node/register ",
-    "clean-setup": "docker-compose down && docker volume rm sf-starter_mongodb_data && docker volume rm sf-starter_redis_data",
+    "clean-setup": "docker-compose down && docker volume rm be-starter_mongodb_data && docker volume rm be-starter_redis_data",
     "dc-up": "docker-compose up -d",
     "dc-down": "docker-compose down",
     "up-dev": "yarn run dc-up && yarn dev",

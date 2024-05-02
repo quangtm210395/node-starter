@@ -1,4 +1,4 @@
-FROM node:16.15-alpine as builder
+FROM node:20.12.2-bookworm as builder
 
 # Create work directory
 WORKDIR /app
@@ -9,7 +9,7 @@ COPY package.json /app
 COPY yarn.lock /app
 RUN yarn install
 
-FROM node:16.15-alpine
+FROM node:20.12.2-bookworm
 # Create work directory
 WORKDIR /app
 # Copy app source to work directory

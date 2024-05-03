@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "license": "MIT",
-  "type": "module",
+  "type": "commonjs",
   "author": {
     "name": "HikariQ",
     "email": "quangtm210395@gmail.com"

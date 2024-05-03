@@ -17,9 +17,7 @@ dotenv.config({
 export const env = {
   node: process.env.NODE_ENV || 'local',
   isProduction: process.env.NODE_ENV === 'prod',
-  isStg: process.env.NODE_ENV === 'stg',
-  isDev: process.env.NODE_ENV === 'dev',
-  isLocal: process.env.NODE_ENV === 'local' || !process.env.NODE_ENV,
+  apmEnabled: !!getOsEnvOptional('ELASTIC_APM_SERVICE_NAME'),
   serverType: process.env.SERVER_TYPE || 'producer', //server type include "producer, worker"
   jobDefinitions: toArray(getOsEnv('JOB_DEFINITIONS')),
   serviceName: getOsEnvOptional('SERVICE_NAME') || 'starter',

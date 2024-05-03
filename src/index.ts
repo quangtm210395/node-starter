@@ -6,6 +6,7 @@ import { Logger } from '@Decorators/Logger';
 
 import { appEvent } from '@Libs/appEvent';
 import { Kernel } from '@Libs/Kernel';
+import { env } from '@Libs/env';
 
 @Service()
 class MainApplication {
@@ -14,6 +15,10 @@ class MainApplication {
   public async bootstrap() {
     Container.set('rootPath', __dirname);
     try {
+      if (env.apmEnabled) {
+        const agent = require('elastic-apm-node').start();
+        Container.set('apmAgent', agent);
+      }
       let providers = Kernel.providers;
       //register all all provider
       for (let provider of providers) {

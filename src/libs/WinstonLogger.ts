@@ -102,7 +102,6 @@ const file = (thisModule?: NodeModule) =>
 // replace authorization token in the header with '*'
 const ignoreAuthorization = format(error => {
   if (error.config?.headers?.Authorization) {
-    // eslint-disable-next-line no-param-reassign
     error.config.headers.Authorization = error.config.headers.Authorization.replace(/./gi, '*');
   }
   return error;

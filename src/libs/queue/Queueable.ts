@@ -1,7 +1,11 @@
+import apm from 'elastic-apm-node';
 import Bull, { Job, JobOptions, Queue } from 'bull';
 import  Redis  from 'ioredis';
 import { isString } from 'lodash';
+import Container from 'typedi';
 import winston from 'winston';
+
+import { env } from '@Libs/env';
 
 export default abstract class Queueable<T> {
   private readonly queueInstance: Queue; //queue instance
@@ -66,6 +70,12 @@ export default abstract class Queueable<T> {
    * middleware before call handle
    */
   public getProcessHandler(job: Job<T>) {
+    let traceId: string;
+    if (env.apmEnabled) {
+      const apm = Container.get<apm.Agent>('apmAgent');
+      apm.startTransaction();
+      traceId = apm.currentTraceIds['trace.id'];
+    }
     this.logger.info(`queue resolve start with data`, JSON.stringify(job.data));
     return this.processHandler(job);
   }

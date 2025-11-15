@@ -2,11 +2,16 @@ import 'reflect-metadata';
 import { Container, Service } from 'typedi';
 import winston from 'winston';
 
+// eslint-disable-next-line , import/order
+const agent = require('elastic-apm-node').start({
+  active: !!process.env.ELASTIC_APM_SERVICE_NAME,
+});
+Container.set('apmAgent', agent);
+
 import { Logger } from '@Decorators/Logger';
 
 import { appEvent } from '@Libs/appEvent';
 import { Kernel } from '@Libs/Kernel';
-import { env } from '@Libs/env';
 
 @Service()
 class MainApplication {
@@ -15,10 +20,6 @@ class MainApplication {
   public async bootstrap() {
     Container.set('rootPath', __dirname);
     try {
-      if (env.apmEnabled) {
-        const agent = require('elastic-apm-node').start();
-        Container.set('apmAgent', agent);
-      }
       let providers = Kernel.providers;
       //register all all provider
       for (let provider of providers) {

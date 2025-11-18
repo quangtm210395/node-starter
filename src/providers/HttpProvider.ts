@@ -31,6 +31,10 @@ export default class HttpProvider extends ServiceProvider {
   }
 
   async register(): Promise<void> {
+    if (!ServerType.allowProducerServer()) {
+      this.logger.info('HttpProvider register skipped (producer server type disabled).');
+      return;
+    }
     this.expressApp = express();
     this.httpServer = createServer(this.expressApp);
     Container.set('express', this.expressApp);
@@ -43,11 +47,24 @@ export default class HttpProvider extends ServiceProvider {
   }
 
   async boot(): Promise<void> {
+    if (!ServerType.allowProducerServer()) {
+      return;
+    }
     this.expressApp.get('/', (req, res) => {
       return res.send('Hello there');
     });
     this.expressApp.get('/health', (req, res) => {
-      return res.send('Healthy');
+      if (Container.has('shutdownInProgress') && Container.get('shutdownInProgress')) {
+        return res.status(503).json({ status: 'unhealthy', reason: 'shutdown_in_progress' });
+      }
+      const memoryLimit = env.health.maxMemoryUsageInBytes;
+      if (memoryLimit) {
+        const rss = process.memoryUsage().rss;
+        if (rss > memoryLimit) {
+          return res.status(503).json({ status: 'unhealthy', reason: 'memory_usage_exceeded', rss, limit: memoryLimit });
+        }
+      }
+      return res.json({ status: 'ok' });
     });
     const cspDefaults = helmet.contentSecurityPolicy.getDefaultDirectives();
     delete cspDefaults['upgrade-insecure-requests'];
@@ -96,6 +113,9 @@ export default class HttpProvider extends ServiceProvider {
   }
 
   async close() {
+    if (!ServerType.allowProducerServer() || !this.httpServer) {
+      return;
+    }
     this.logger.info('Closing http server.');
     return new Promise((resolve, reject) => {
       this.httpServer.close(() => {

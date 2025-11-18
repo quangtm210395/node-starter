@@ -99,6 +99,14 @@ const file = (thisModule?: NodeModule) =>
     return { ...info, fileName };
   });
 
+const setLogger = (loggerName?: string) =>
+  format((info: any) => {
+    if (!loggerName) {
+      return info;
+    }
+    return { ...info, 'log.logger': loggerName };
+  });
+
 // replace authorization token in the header with '*'
 const ignoreAuthorization = format(error => {
   if (error.config?.headers?.Authorization) {
@@ -121,7 +129,7 @@ export class WLogger {
     this.transport.level = level;
   }
 
-  public create(thisModule: NodeModule) {
+  public create(thisModule: NodeModule, loggerName = 'app') {
     const logger = winston.createLogger({
       format: env.log.json ?
         combine(
@@ -129,6 +137,7 @@ export class WLogger {
           errors({ stack: true }),
           all(),
           file(thisModule)(),
+          setLogger(loggerName)(),
           ecsFormat(),
         ) :
         combine(
@@ -137,11 +146,12 @@ export class WLogger {
           !nonLocalEnvs.includes(process.env.NODE_ENV) ? colorize() : format(upperCase)(),
           all(),
           file(thisModule)(),
+          setLogger(loggerName)(),
           timestamp(),
           align(),
           printf(
             info =>
-              `[${info.timestamp}] ${info.level}  [${info.fileName}]: ${info.message} ${
+              `[${info.timestamp}] ${info['log.logger']} ${info.level}  [${info.fileName}]: ${info.message} ${
                 info.error || info.err ? `\n${info.error?.stack_trace || info.err?.stack || '' }` : ''
               }`,
           ),

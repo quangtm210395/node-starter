@@ -7,13 +7,17 @@ import MongodbProvider from '@Providers/MongodbProvider';
 import GraphqlProvider from '@Providers/GraphqlProvider';
 import SocketProvider from '@Providers/SocketProvider';
 import TypeORMProvider from '@Providers/TypeORMProvider';
+import KafkaProvider from '@Providers/KafkaProvider';
+import JobsProvider from '@Providers/JobsProvider';
 
 export class Kernel {
   //provider register
   public static providers = [
     BootstrapProvider,
     CacheProvider,
-    TypeORMProvider,
+    KafkaProvider,
+    JobsProvider,
+    // TypeORMProvider,
     HttpProvider,
     // GraphqlProvider,
     // MongodbProvider,

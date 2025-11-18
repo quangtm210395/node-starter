@@ -12,6 +12,7 @@ import { Logger } from '@Decorators/Logger';
 
 import { appEvent } from '@Libs/appEvent';
 import { Kernel } from '@Libs/Kernel';
+import { env } from '@Libs/env';
 
 @Service()
 class MainApplication {
@@ -37,18 +38,38 @@ class MainApplication {
         // process.exit(1);
       });
 
-      const handleClose = async (signal: string) => {
-        this.logger.info(`${signal} signal received.`);
-        //close all all provider
+      let shuttingDown = false;
+      const handleClose = async (signal: NodeJS.Signals) => {
+        if (shuttingDown) {
+          this.logger.warn(`Shutdown already in progress. Ignoring ${signal}.`);
+          return;
+        }
+        shuttingDown = true;
+        Container.set('shutdownInProgress', true);
+        this.logger.info(`${signal} signal received. Starting graceful shutdown.`);
+
+        const forceExitTimeout = env.shutdown.gracePeriodInMs;
+        const forceExitTimer = setTimeout(() => {
+          this.logger.error(`Graceful shutdown timed out after ${forceExitTimeout}ms. Forcing exit.`);
+          process.exit(1);
+        }, forceExitTimeout).unref();
+
         const closingProviders = [...providers];
         for (let provider of closingProviders.reverse()) {
-          await Container.get(provider).close();
+          try {
+            await Container.get(provider).close();
+          } catch (error) {
+            this.logger.error(`Failed to close provider ${provider.name}`, error);
+          }
         }
-        appEvent.emit('process_closed');
+
+        clearTimeout(forceExitTimer);
+        // appEvent.emit('process_closed');
       };
-      process.on('SIGTERM', handleClose);
-      process.on('SIGINT', handleClose);
-      appEvent.on('process_closed', () => {
+      process.once('SIGTERM', handleClose);
+      process.once('SIGINT', handleClose);
+      process.once('SIGQUIT', handleClose);
+      appEvent.once('process_closed', () => {
         this.logger.info('Successfully closed process.');
         process.exit(0);
       });

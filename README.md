@@ -89,6 +89,8 @@ yarn up-dev
 > This starts a local server using `nodemon`, which will watch for any file changes and will restart the server according to these changes.
 > The server address will be displayed to you as `http://0.0.0.0:3000`.
 
+The default `docker-compose.yml` also spins up Redis, Postgres, Zookeeper, and Kafka so you can run the Kafka integration locally without extra setup.
+
 After stopping your service, you can stop and remove all running docker container for development purpose (like redis, mongodb) by running this command `docker-compose down`.
 
 ## ❯ Scripts and Tasks
@@ -105,7 +107,7 @@ After stopping your service, you can stop and remove all running docker containe
 ### Running in dev mode
 
 - Run `yarn up-dev` to start nodemon with ts-node, to serve the app.
-- This script will run some docker containers for redis, mongodb in your machine and then run your service.
+- This script will run docker containers for redis, mongodb, postgres, zookeeper, and kafka in your machine and then run your service.
 - The server address will be displayed to you as `http://0.0.0.0:3000`
 
 ### Remove development purpose containers
@@ -132,6 +134,7 @@ The swagger and the monitor route can be altered in the `.env` file.
 | Route          | Description |
 | -------------- | ----------- |
 | **/api**       | Shows us the name, description and the version of the package.json |requests |
+| **/health**    | Returns service health; responds 503 if RSS exceeds `HEALTH_MAX_MEMORY_USAGE_IN_MB` |
 | **/swagger-ui**   | This is the Swagger UI with our API documentation |
 | **/monitor**   | Shows a small monitor page for the server |
 | **/api/demo** | Example demo endpoint |
@@ -175,6 +178,74 @@ export class UserService {
 
     ...
 ```
+
+## ❯ Kafka Integration
+
+- Enable Kafka by setting `KAFKA_ENABLED=true` and providing comma separated broker addresses in `KAFKA_BROKERS`.
+- Register any consumer classes via the `KAFKA_CONSUMERS` env (comma separated glob patterns, e.g. `src/consumers/**/*.ts`). The provider expands the patterns and loads every matching file in both TS (dev) and compiled JS builds.
+- Use `KAFKA_ENABLED_CONSUMERS` to whitelist specific consumer class names (leave empty to run all discovered consumers).
+- Configure security by setting `KAFKA_SSL_ENABLED=true` for TLS and `KAFKA_SASL_ENABLED=true` plus `KAFKA_SASL_MECHANISM/KAFKA_USERNAME/KAFKA_PASSWORD` for SASL auth. These map directly to the kafka-js `ssl`/`sasl` settings.
+- Create a consumer by decorating a `typedi` service with `@KafkaListener({ topic: 'topic-name', groupId?: string })` and implementing a `handle(payload: KafkaParsedMessage<MyPayload>)` method. The runner auto parses JSON message values and still exposes raw metadata.
+- A sample REST producer lives at `POST /kafka-demo/produce`; it publishes JSON payloads to the `demo-topic` consumed by `ExampleKafkaConsumer`.
+- Access the Kafka producer anywhere by resolving `Container.get('kafkaProducer')` and use it as a regular `kafkajs` producer.
+- Example consumer:
+
+```ts
+import { Service } from 'typedi';
+
+import { KafkaListener } from '@Decorators/KafkaListener';
+import { KafkaParsedMessage } from '@Libs/kafka/KafkaConsumerMetadata';
+
+@Service()
+@KafkaListener({ topic: 'user-events' })
+export class UserEventsConsumer {
+  async handle({ value }: KafkaParsedMessage<UserPayload>) {
+    // value is parsed JSON (or raw string if parsing failed)
+    // business logic here
+  }
+}
+```
+
+An executable sample is provided in `src/consumers/ExampleKafkaConsumer.ts` and referenced from `.env.example`.
+
+## ❯ Bull Queues
+
+- Add job classes under `src/jobs` (or any folder) and decorate them with `@QueueWorker()` while extending `Queueable`.
+- Point `JOB_HANDLERS` to comma separated glob patterns so the `JobsProvider` can import and register them (e.g., `src/jobs/**/*.ts`).
+- Control which queues run on a worker pod via `JOB_DEFINITIONS`. Leave it empty to run every registered queue, or specify queue names (e.g., `JOB_DEFINITIONS=example-bull-job,foo`).
+- Workers are enabled when `SERVER_TYPE` includes `worker`. Each queue gets its own resilient Redis connection and shuts down cleanly through the provider.
+- Example job:
+
+```ts
+import { Inject, Service } from 'typedi';
+import { Job } from 'bull';
+import Redis from 'ioredis';
+
+import { Logger } from '@Decorators/Logger';
+import { QueueWorker } from '@Decorators/QueueWorker';
+import Queueable from '@Libs/queue/Queueable';
+
+interface ExampleBullPayload {
+  message: string;
+}
+
+@Service()
+@QueueWorker()
+export class ExampleBullJob extends Queueable<ExampleBullPayload> {
+  constructor(@Logger(module) logger, @Inject('cache') cache: Redis.Redis) {
+    super(logger, cache);
+  }
+
+  queueName(): string {
+    return 'example-bull-job';
+  }
+
+  async processHandler(job: Job<ExampleBullPayload>) {
+    // business logic here
+  }
+}
+```
+- A sample REST endpoint `POST /jobs-demo/dispatch` enqueues `ExampleBullJob`, making it easy to validate worker processing.
 ## ❯ Graphql Subscription
 With normal Subscription you can check document from [TypeGraphql](https://typegraphql.com/docs/subscriptions.html).
 But `@PubSub()` only work in `@Mutation` function, so we have some modify to make `@PubSub()` to work everywhere. Instead of using `@PubSub()` as a parameter of function. We can using `Container` to inject directly in class you want. Here is example:

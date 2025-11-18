@@ -13,6 +13,10 @@ export class ServerType {
     return ServerType.getServerTypes().includes('worker');
   }
 
+  static allowConsumerServer() {
+    return ServerType.getServerTypes().includes('consumer');
+  }
+
   static allowCronServer() {
     return ServerType.getServerTypes().includes('cron');
   }

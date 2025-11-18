@@ -2,28 +2,23 @@ version: '3.3'
 services:
 
   redis:
-    image: docker.io/bitnami/redis:7.0
-    environment:
-      # ALLOW_EMPTY_PASSWORD is recommended only for development.
-      - ALLOW_EMPTY_PASSWORD=yes
-      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    image: redis:7
     ports:
       - '2000:6379'
     volumes:
-      - 'redis_data:/bitnami/redis/data'
+      - 'redis_data:/data'
+    command: ['redis-server', '--appendonly', 'yes']
 
-  # mongodb-primary:
-  #   # container_name: mongodb-primary
-  #   image: 'bitnami/mongodb:4.4'
-  #   environment:
-  #     - MONGODB_ADVERTISED_HOSTNAME=localhost
-  #     - MONGODB_REPLICA_SET_MODE=primary
-  #     - MONGODB_REPLICA_SET_KEY=replicasetkey123
-  #     - MONGODB_ROOT_PASSWORD=password123
-  #   volumes:
-  #     - 'mongodb_data:/bitnami'
+  # mongodb:
+  #   image: mongo:6
+  #   restart: always
   #   ports:
-  #     - 27017:27017
+  #     - '27017:27017'
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: password123
+  #   volumes:
+  #     - mongodb_data:/data/db
 
   postgres:
     image: postgres
@@ -36,16 +31,48 @@ services:
     volumes:
       - postgres_data:/data/postgres
 
-  demo:
-    build: .
-    env_file: .env
-    links:
-      - mongodb-primary
-      - redis
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - 3001:3001
-    networks:
-      - default
+      - '22181:2181'
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    depends_on:
+      - zookeeper
+    ports:
+      - '9092:9092'
+      - '29092:29092'
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+
+  # demo:
+  #   build: .
+  #   env_file: .env
+  #   depends_on:
+  #     - mongodb
+  #     - redis
+  #     - kafka
+  #   ports:
+  #     - 3001:3001
+  #   networks:
+  #     - default
 
 volumes:
   mongodb_data:
@@ -53,4 +80,8 @@ volumes:
   redis_data:
     driver: local
   postgres_data:
+    driver: local
+  kafka_data:
+    driver: local
+  zookeeper_data:
     driver: local

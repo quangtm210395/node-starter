@@ -11,9 +11,6 @@ appEvent.on('server_started', (port: number) => {
 appEvent.on('graphql_started', (url: string) => {
   logger.info(`GraphQL Playground available at ${url}`);
 });
-appEvent.on('gameServer_registered', () => {
-  logger.info(`Colyseus Server registered !!!`);
-});
 appEvent.on('socket_started', () => {
   logger.info(`Socket.io started !!!`);
 });
@@ -29,7 +26,4 @@ appEvent.on('cron_stopped', () => {
 });
 appEvent.on('queue_stopped', () => {
   logger.info(`Queue jobs stopped`);
-});
-appEvent.on('gameServer_stopping', () => {
-  logger.info(`Colyseus Server is being shutting down !!!`);
 });

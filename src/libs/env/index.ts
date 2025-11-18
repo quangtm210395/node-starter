@@ -20,6 +20,7 @@ export const env = {
   apmEnabled: !!getOsEnvOptional('ELASTIC_APM_SERVICE_NAME'),
   serverType: process.env.SERVER_TYPE || 'producer', //server type include "producer, worker"
   jobDefinitions: toArray(getOsEnv('JOB_DEFINITIONS')),
+  jobHandlers: toArray(getOsEnvOptional('JOB_HANDLERS') || ''),
   serviceName: getOsEnvOptional('SERVICE_NAME') || 'starter',
   promise: {
     concurrency: toNumber(getOsEnv('PROMISE_CONCURRENCY')),
@@ -97,5 +98,31 @@ export const env = {
     clientId: getOsEnv('KEYCLOAK_CLIENT_ID'),
     clientSecret: getOsEnv('KEYCLOAK_CLIENT_SECRET'),
     tokenUri: `${getOsEnv('KEYCLOAK_SERVER_URL')}/realms/${getOsEnv('KEYCLOAK_REALM')}/protocol/openid-connect/token`,
+  },
+  kafka: {
+    enabled: toBool(getOsEnvOptional('KAFKA_ENABLED') || 'false'),
+    clientId: getOsEnvOptional('KAFKA_CLIENT_ID') || getOsEnvOptional('SERVICE_NAME') || 'starter',
+    brokers: toArray(getOsEnvOptional('KAFKA_BROKERS') || ''),
+    allowAutoTopicCreation: toBool(getOsEnvOptional('KAFKA_ALLOW_AUTO_TOPIC_CREATION') || 'true'),
+    consumers: toArray(getOsEnvOptional('KAFKA_CONSUMERS') || ''),
+    enabledConsumers: toArray(getOsEnvOptional('KAFKA_ENABLED_CONSUMERS') || ''),
+    consumer: {
+      groupId: getOsEnvOptional('KAFKA_CONSUMER_GROUP_ID'),
+      fromBeginning: toBool(getOsEnvOptional('KAFKA_CONSUMER_FROM_BEGINNING') || 'false'),
+    },
+    username: getOsEnvOptional('KAFKA_USERNAME'),
+    password: getOsEnvOptional('KAFKA_PASSWORD'),
+    saslMechanism: getOsEnvOptional('KAFKA_SASL_MECHANISM') || 'scram-sha-512',
+    saslEnabled: toBool(getOsEnvOptional('KAFKA_SASL_ENABLED') || 'false'),
+    sslEnabled: toBool(getOsEnvOptional('KAFKA_SSL_ENABLED') || 'false'),
+  },
+  shutdown: {
+    gracePeriodInMs: toNumber(getOsEnvOptional('SHUTDOWN_GRACE_PERIOD_IN_MS') || '30000'),
+  },
+  health: {
+    maxMemoryUsageInBytes: (() => {
+      const maxInMb = toOptionalNumber(getOsEnvOptional('HEALTH_MAX_MEMORY_USAGE_IN_MB'));
+      return maxInMb ? maxInMb * 1024 * 1024 : undefined;
+    })(),
   },
 };
